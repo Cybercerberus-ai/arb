@@ -1,0 +1,44 @@
+/* Fog is progressive enhancement: the document is visible without this script. */
+body.mist-ready .hero-line { overflow:visible; }
+body.mist-ready .hero-word,
+body.mist-ready .hero-content>.eyebrow,
+body.mist-ready .hero-description,
+body.mist-ready .hero-actions { animation:none!important; }
+body.mist-ready.motion-ready.js-ready [data-reveal] { opacity:1; transition-delay:0ms; }
+body.mist-ready.motion-ready.js-ready [data-reveal]:not(.space-plane):not(.capability-card) { transform:none; transition:none; }
+body.mist-ready.motion-ready.js-ready .capability-card[data-reveal] {
+  transform:perspective(1100px) translate3d(0,var(--card-lift,0px),0) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg));
+  transition:transform .55s var(--motion-ease),box-shadow .5s,border-color .4s;
+}
+body.mist-ready.space-travel .space-plane[data-reveal] {
+  transform:perspective(2200px) translate3d(var(--plane-x,0px),0,var(--plane-z,0px)) rotateX(var(--plane-rx,0deg)) rotateY(var(--plane-ry,0deg));
+}
+body.mist-ready .mist-node:not(.is-mist-clear) { opacity:0; filter:blur(12px) brightness(1.6); translate:0 16px; scale:.985; }
+body.mist-ready .mist-control:not(.is-mist-clear) { translate:none; scale:none; }
+body.mist-ready .mist-volume:not(.is-mist-clear) { filter:none; translate:none; scale:none; }
+body.mist-ready .mist-node.is-mist-moving { will-change:opacity,filter,translate,scale; }
+body.mist-ready .mist-volume.is-mist-moving { will-change:opacity; }
+.mist-surface { position:relative; }
+body.mist-ready .mist-surface::after {
+  content:""; position:absolute; inset:-3px; z-index:4; pointer-events:none; border-radius:inherit;
+  background:radial-gradient(ellipse at 30% 40%,#fafcfc,#f4f7f8 65%,#eff3f5);
+  opacity:1; filter:blur(5px); transition:opacity .9s cubic-bezier(.22,.65,.2,1);
+}
+body.mist-ready .mist-surface.is-mist-clear::after { opacity:0; }
+body.mist-ready .mist-node:focus-visible,
+body.mist-ready .mist-node:has(:focus-visible) { opacity:1!important; filter:none!important; translate:none!important; scale:none!important; }
+body.mist-ready .mist-surface:focus-within::after { opacity:0; transition:none; }
+@media(max-width:760px) {
+  body.mist-ready.space-travel .space-plane[data-reveal] { transform:perspective(1600px) translate3d(0,0,var(--plane-z,0px)); }
+  body.mist-ready .mist-node:not(.is-mist-clear) { filter:blur(8px) brightness(1.4); }
+  body.mist-ready .mist-volume:not(.is-mist-clear) { filter:none; }
+}
+@media(prefers-reduced-motion:reduce) {
+  body.mist-ready .mist-node { opacity:1!important; filter:none!important; translate:none!important; scale:none!important; will-change:auto!important; }
+  body.mist-ready .mist-surface::after { display:none; }
+  body.mist-ready.space-travel .space-plane[data-reveal],body.mist-ready .capability-card[data-reveal] { transform:none!important; }
+}
+@media print {
+  body.mist-ready .mist-node { opacity:1!important; filter:none!important; translate:none!important; scale:none!important; }
+  body.mist-ready .mist-surface::after { display:none; }
+}

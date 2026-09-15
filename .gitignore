@@ -1,0 +1,20 @@
+# Local credentials and machine-specific files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dependencies, archives and generated output
+node_modules/
+dist/
+coverage/
+*.log
+*.zip
+
+# Unused source files from the discarded process-animation experiment
+/process.css
+/process-geometry.js
