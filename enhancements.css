@@ -1,4 +1,12 @@
 /* Progressive enhancement: the content is present before JavaScript starts. */
+/* SVG geometry avoids platform emoji/font substitution for directional icons. */
+.arrow-mark { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; line-height:1; vertical-align:middle; }
+.ui-arrow { display:block; width:1em; height:1em; flex-shrink:0; pointer-events:none; }
+.arrow-mark>svg.ui-arrow { stroke:currentColor; }
+.small-action>.arrow-mark { font-size:16px; }
+.privacy-sheet__footer a { gap:6px; }
+.privacy-sheet__footer .arrow-mark,.legal-content .arrow-mark { font-size:16px; }
+@media(hover:none),(pointer:coarse) { .arrow-mark { transform:none!important; } }
 [hidden], .sector-tabs[hidden], .sector-panel[hidden] { display:none!important; }
 .sector-panel { min-height:190px; }
 .primary-nav>a:not(.button):hover { color:#c51529; }

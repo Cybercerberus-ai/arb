@@ -29,13 +29,13 @@ a.capability-card:hover .card-link,
 a.capability-card:focus-visible .card-link {
   color:var(--red);
 }
-a.capability-card:hover .card-link > span,
-a.capability-card:focus-visible .card-link > span {
+a.capability-card:hover .card-link > .arrow-mark,
+a.capability-card:focus-visible .card-link > .arrow-mark {
   transform:translate(3px,-3px);
 }
 @media (prefers-reduced-motion:reduce) {
-  a.capability-card:hover .card-link > span,
-  a.capability-card:focus-visible .card-link > span {
+  a.capability-card:hover .card-link > .arrow-mark,
+  a.capability-card:focus-visible .card-link > .arrow-mark {
     transform:none;
   }
 }
