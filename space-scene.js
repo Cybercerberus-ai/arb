@@ -4,6 +4,7 @@
   if (!canvas) return;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+  const touch = window.matchMedia('(pointer: coarse)');
   const clamp = (number, low = 0, high = 1) => Math.min(high, Math.max(low, number));
   const mix = (a, b, amount) => a + (b - a) * amount;
   const smooth = amount => amount * amount * (3 - 2 * amount);
@@ -19,6 +20,9 @@
   let width = 1;
   let height = 1;
   let dpr = 1;
+  let viewportWidth = window.innerWidth;
+  let viewportHeight = Math.max(1, window.innerHeight);
+  const largeViewport = window.CSS && typeof window.CSS.supports === 'function' && window.CSS.supports('height', '100lvh');
   let scrollRange = 1;
   let stops = [];
   let scrollTarget = window.scrollY;
@@ -224,7 +228,7 @@
 
   function createForm(variant) {
     const vertices = [], indices = [];
-    const columns = 160, rows = 32;
+    const columns = touch.matches ? 96 : 160, rows = touch.matches ? 20 : 32;
     const perimeter = [];
     const addVertex = (point, normal, tangent, u, v, side) => {
       const index = vertices.length / 12;
@@ -284,14 +288,21 @@
   function measure() {
     layoutDirty = false;
     width = Math.max(1, window.innerWidth);
-    height = Math.max(1, window.innerHeight);
-    dpr = Math.min(Math.max(window.devicePixelRatio || 1,width<700?1.25:1.5),2,Math.sqrt(5000000/(width*height)));
+    // A stable large viewport avoids reallocating GPU buffers as mobile bars or
+    // the keyboard resize the visual viewport. Older engines retain the height
+    // from the last width/orientation change instead.
+    canvas.style.height = touch.matches ? (largeViewport ? '100lvh' : `${viewportHeight}px`) : '100%';
+    height = Math.max(1, touch.matches ? (canvas.clientHeight || viewportHeight) : window.innerHeight);
+    const pixelBudget = touch.matches ? 2250000 : 5000000;
+    const maximumDimension = gl.getParameter(gl.MAX_RENDERBUFFER_SIZE);
+    const density = touch.matches ? (window.devicePixelRatio || 1) : Math.max(window.devicePixelRatio || 1,width<700 ? 1.25 : 1.5);
+    dpr = Math.min(density,touch.matches ? 1.5 : 2,Math.sqrt(pixelBudget/(width*height)),maximumDimension/width,maximumDimension/height);
     const pixelWidth = Math.round(width*dpr), pixelHeight = Math.round(height*dpr);
     if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
       canvas.width = pixelWidth;
       canvas.height = pixelHeight;
-      gl.viewport(0,0,pixelWidth,pixelHeight);
     }
+    gl.viewport(0,0,pixelWidth,pixelHeight);
     scrollRange = Math.max(1,document.documentElement.scrollHeight-height);
     const sections = [
       ['.hero',.62,-.03,1.06,.3,-.24,.92,.96],
@@ -418,15 +429,16 @@
       buffers.forEach(item => gl.deleteBuffer(item));
       programs.forEach(item => gl.deleteProgram(item));
     }
+    buffers.length = programs.length = 0;
   }
 
   function schedule() {
-    if (!failed && !document.hidden && !frame) frame = window.requestAnimationFrame(tick);
+    if (!failed && !document.hidden && !document.body.classList.contains('privacy-open') && !frame) frame = window.requestAnimationFrame(tick);
   }
 
   function tick(time) {
     frame = 0;
-    if (failed || document.hidden) return;
+    if (failed || document.hidden || document.body.classList.contains('privacy-open')) return;
     try {
       if (layoutDirty) measure();
       const elapsed = previousTime ? clamp(time-previousTime,1,48) : 16;
@@ -453,29 +465,43 @@
     } catch { fail(); }
   }
 
-  try {
-    gl = canvas.getContext('webgl',{ alpha:true,antialias:true,depth:true,premultipliedAlpha:false,powerPreference:'low-power' });
-    if (!gl) { fail(); return; }
-    const shared = ['uAspect','uCenter','uRotation','uScale','uDepth'];
-    const derivativeSupport = gl.getExtension('OES_standard_derivatives');
-    const fragment = (derivativeSupport ? '#extension GL_OES_standard_derivatives : enable\n#define WEAVE_DERIVATIVES\n' : '')+meshFragment;
-    meshProgram = program(meshVertex,fragment,['aPosition','aNormal','aTangent','aUv','aSide'],[...shared,'uOpacity','uDetail','uArrival','uResolution']);
-    starProgram = program(starVertex,starFragment,['aPosition','aSize'],['uTravel','uAspect','uDpr','uPointer']);
-    createGeometry();
-    measure();
-    if (reduced.matches) scrollCurrent = 0;
-    render();
-    if (gl.getError() !== gl.NO_ERROR) throw new Error('Scene rendering unavailable');
-    canvas.dataset.renderer = 'webgl';
-    document.body.classList.add('space-rendered');
-    schedule();
-  } catch { fail(); return; }
+  function initialize() {
+    failed = false;
+    previousTime = 0;
+    buffers.length = programs.length = 0;
+    try {
+      gl = canvas.getContext('webgl',{ alpha:true,antialias:true,depth:true,premultipliedAlpha:false,powerPreference:'low-power' });
+      if (!gl) { fail(); return; }
+      const shared = ['uAspect','uCenter','uRotation','uScale','uDepth'];
+      const derivativeSupport = gl.getExtension('OES_standard_derivatives');
+      const fragment = (derivativeSupport ? '#extension GL_OES_standard_derivatives : enable\n#define WEAVE_DERIVATIVES\n' : '')+meshFragment;
+      meshProgram = program(meshVertex,fragment,['aPosition','aNormal','aTangent','aUv','aSide'],[...shared,'uOpacity','uDetail','uArrival','uResolution']);
+      starProgram = program(starVertex,starFragment,['aPosition','aSize'],['uTravel','uAspect','uDpr','uPointer']);
+      createGeometry();
+      measure();
+      if (reduced.matches) scrollCurrent = 0;
+      render();
+      if (gl.getError() !== gl.NO_ERROR) throw new Error('Scene rendering unavailable');
+      canvas.dataset.renderer = 'webgl';
+      document.body.classList.add('space-rendered');
+      schedule();
+    } catch { fail(); }
+  }
+  initialize();
+  if (failed) return;
 
   window.addEventListener('scroll',() => {
+    if (document.body.classList.contains('privacy-open')) return;
     scrollTarget = window.scrollY;
     if (!reduced.matches) schedule();
   },{passive:true});
-  window.addEventListener('resize',() => { layoutDirty=true; schedule(); },{passive:true});
+  window.addEventListener('resize',() => {
+    if (document.body.classList.contains('privacy-open')) return;
+    if (touch.matches && window.innerWidth===viewportWidth) return;
+    viewportWidth=window.innerWidth;
+    viewportHeight=Math.max(1,window.innerHeight);
+    layoutDirty=true; schedule();
+  },{passive:true});
   window.addEventListener('pointermove',event => {
     if (reduced.matches || !finePointer.matches || event.pointerType==='touch') return;
     pointer.targetX=clamp(event.clientX/width*2-1,-1,1);
@@ -490,9 +516,10 @@
     scrollTarget=window.scrollY;
     scrollCurrent=reduced.matches?0:scrollTarget;
     previousTime=0;
+    layoutDirty=true;
     schedule();
   };
-  [reduced,finePointer].forEach(query => {
+  [reduced,finePointer,touch].forEach(query => {
     if (query.addEventListener) query.addEventListener('change',mediaChange);
     else query.addListener(mediaChange);
   });
@@ -507,7 +534,13 @@
       schedule();
     }
   });
-  canvas.addEventListener('webglcontextlost',() => fail(),{passive:true});
+  // Mobile browsers may reclaim the GPU when another tab/app is foregrounded.
+  canvas.addEventListener('webglcontextlost',event => { event.preventDefault(); fail(); });
+  canvas.addEventListener('webglcontextrestored',() => {
+    if (!document.body.classList.contains('privacy-open')) scrollTarget=window.scrollY;
+    scrollCurrent=reduced.matches?0:scrollTarget;
+    initialize();
+  });
   window.addEventListener('load',() => { layoutDirty=true; schedule(); },{once:true});
   if ('ResizeObserver' in window) {
     const resizeObserver = new ResizeObserver(() => { layoutDirty=true; schedule(); });

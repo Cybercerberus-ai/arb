@@ -1,4 +1,22 @@
-# Sprawdzenie kodu — 14 września 2026
+# Sprawdzenie kodu — 16 września 2026
+
+## Telefony i tablety
+
+- Poprawiono wielkość nagłówków, tekstów i pól dotykowych; menu kompaktowe działa do 1024 px, a formularz na telefonie ma jedną kolumnę. Pola na ekranach dotykowych mają 16 px; zachowano możliwość powiększania strony.
+- Menu zamyka się po wybraniu sekcji, kliknięciu poza nim, Escape, wyjściu fokusu i zmianie układu. Fokus trafia do wybranej sekcji.
+- Odnośniki w zakładkach zastosowań są dostępne także na telefonie i przenoszą wybrany obszar do formularza.
+- Usunięto poziome przepełnienie pochodzące z dekoracyjnych warstw karbonu na małych ekranach. Uzupełniono odstępy tekstów po ukrytych łamaniach wierszy.
+- Polityka ma stabilną blokadę przewijania, przywraca pozycję obu osi i fokus; wysokość panelu oraz marginesy uwzględniają paski przeglądarki i bezpieczny obszar ekranu. Dodano fallback jednostek vh/svh/dvh.
+- Na urządzeniach z głównym wskaźnikiem dotykowym ograniczono gęstość renderowania WebGL i liczbę wierzchołków. Zmiana wysokości od klawiatury/pasków nie realokuje stale płótna. Scena odtwarza się po utracie kontekstu GPU; przy braku WebGL pozostaje obraz zastępczy. Wyłanianie z rozmycia zachowano.
+- Do repozytorium dołączono powtarzalne testy oraz `node tools/check.cjs`; generator publikacyjny kopiuje nowe style mobilne.
+
+Weryfikacja: składnia 9 skryptów, 33 testy raportowane przez Node (w tym zestawy z 17 kontrolami walidatora i 13 kontrolami publikacji) — bez błędów. W przeglądarce sprawdzono układy 320, 390, 600, 768, 834 i 1024 px oraz poziomy 844 × 390. Nie stwierdzono poziomego przepełnienia dla testowanych widoków mobilnych. Zweryfikowano menu, karty, zakładki, wybór obszaru formularza, niepoprawne dane oraz politykę z powrotem do poprzedniej pozycji. Konsola sprawdzanej strony bez błędów i ostrzeżeń. Sprawdzono również układ desktop przy 1440 px.
+
+Testy przeglądarkowe wykonano w Chromium przy emulowanych rozmiarach. Nie wykonywano testów na fizycznym iPhonie/iPadzie ani w natywnym Safari. Zachowanie utraty WebGL, klawiatury i ustawień ruchu sprawdzają testy VM; nie jest to pomiar wydajności konkretnego telefonu.
+
+Odniesienia implementacyjne: [jednostki viewport i dialog w WebKit](https://webkit.org/blog/12445/new-webkit-features-in-safari-15-4/), [bezpieczne marginesy env()](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/env).
+
+## Wcześniejszy przegląd — 14 września 2026
 
 Naprawione błędy:
 

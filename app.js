@@ -16,16 +16,22 @@
   $$('[data-current-year]').forEach(node => { node.textContent = String(new Date().getFullYear()); });
 
   const header = $('#site-header');
-  const updateHeader = () => header?.classList.toggle('is-scrolled', window.scrollY > 20);
+  const updateHeader = () => {
+    if (document.body.classList.contains('privacy-open')) return;
+    header?.classList.toggle('is-scrolled', window.scrollY > 20);
+  };
   window.addEventListener('scroll', updateHeader, { passive: true });
   updateHeader();
 
   const menuToggle = $('#menu-toggle');
   const navigation = $('#primary-nav');
-  function closeMenu() {
+  const compactMenu = window.matchMedia?.('(max-width: 1024px)');
+  const isCompactMenu = () => compactMenu?.matches ?? window.innerWidth <= 1024;
+  function closeMenu(restoreFocus = false) {
     menuToggle?.setAttribute('aria-expanded', 'false');
     menuToggle?.setAttribute('aria-label', 'Otwórz menu');
     navigation?.classList.remove('is-open');
+    if (restoreFocus) menuToggle?.focus({ preventScroll: true });
   }
   if (menuToggle && navigation) {
     menuToggle.addEventListener('click', () => {
@@ -35,13 +41,48 @@
       navigation.classList.toggle('is-open', open);
     });
     document.documentElement.classList.add('has-js-nav');
-    $$('a[href]', navigation).forEach(link => link.addEventListener('click', closeMenu));
+    $$('a[href]', navigation).forEach(link => link.addEventListener('click', event => {
+      if (event.defaultPrevented || event.button > 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      const compact = isCompactMenu();
+      closeMenu();
+      if (!compact) return;
+      const href = link.getAttribute('href');
+      let target = null;
+      try {
+        if (href?.startsWith('#') && href.length > 1) target = document.getElementById(decodeURIComponent(href.slice(1)));
+      } catch { /* A malformed fragment must not break the native link. */ }
+      if (!target) {
+        if (navigation.contains(document.activeElement)) menuToggle.focus({ preventScroll: true });
+        return;
+      }
+      // Native anchor navigation performs the scroll and updates the URL once.
+      // Move keyboard focus out of the menu before it becomes hidden.
+      const temporaryTabIndex = !target.hasAttribute('tabindex');
+      if (temporaryTabIndex) {
+        target.setAttribute('tabindex', '-1');
+        target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true });
+      }
+      target.focus({ preventScroll: true });
+    }));
     document.addEventListener('keydown', event => {
       if (event.key === 'Escape' && menuToggle.getAttribute('aria-expanded') === 'true') {
-        closeMenu();
-        menuToggle.focus();
+        event.preventDefault();
+        closeMenu(true);
       }
     });
+    const outsideMenu = target => !navigation.contains(target) && !menuToggle.contains(target);
+    document.addEventListener('click', event => {
+      if (menuToggle.getAttribute('aria-expanded') === 'true' && outsideMenu(event.target)) {
+        closeMenu(navigation.contains(document.activeElement));
+      }
+    });
+    document.addEventListener('focusin', event => {
+      if (menuToggle.getAttribute('aria-expanded') === 'true' && outsideMenu(event.target)) closeMenu();
+    });
+    const updateMenuLayout = () => closeMenu(isCompactMenu() && navigation.contains(document.activeElement));
+    if (compactMenu?.addEventListener) compactMenu.addEventListener('change', updateMenuLayout);
+    else if (compactMenu?.addListener) compactMenu.addListener(updateMenuLayout);
+    else window.addEventListener('resize', updateMenuLayout, { passive: true });
   }
 
   const navLinks = $$('[data-nav-link]');
@@ -127,6 +168,16 @@
   const form = $('#project-form');
   const formStatus = $('#form-status');
   const field = name => form?.elements.namedItem(name) || (form ? $(`#${name}, #project-${name}`, form) : null);
+  // A sector's project link carries that choice into the brief on every screen.
+  $$('[data-project-sector]').forEach(link => link.addEventListener('click', event => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const sector = field('sector');
+    if (sector && [...sector.options].some(option => option.value === link.dataset.projectSector)) {
+      sector.value = link.dataset.projectSector;
+      sector.setCustomValidity('');
+      sector.removeAttribute('aria-invalid');
+    }
+  }));
   const messageField = field('message');
   const messageCount = $('#message-count');
   function updateMessageCount() {

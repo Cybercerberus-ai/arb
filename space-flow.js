@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const mobile = window.matchMedia('(max-width: 760px)');
+  const touch = window.matchMedia('(pointer: coarse)');
   const clamp = (n,min,max) => Math.max(min,Math.min(max,n));
   const planes = [...document.querySelectorAll('.space-plane')].map((element,index) => ({element,index,top:0,height:0,x:0,z:0,rx:0,ry:0,tx:0,tz:0,trx:0,try:0}));
   const stops = [...document.querySelectorAll('.flight-nav a')].map(link=>({link,section:document.querySelector(link.getAttribute('href'))}));
@@ -11,6 +11,8 @@
   let lastTime = 0;
   let dirty = true;
   let measureDirty = true;
+  let viewportWidth = window.innerWidth;
+  let viewportHeight = window.innerHeight || 1;
   function layoutTop(element) {
     let top=0;
     for(let node=element;node;node=node.offsetParent) top+=node.offsetTop;
@@ -22,10 +24,10 @@
     measureDirty=false;
   }
   function requestFrame() {
-    if(!frame && !document.hidden)frame=requestAnimationFrame(render);
+    if(!frame && !document.hidden && !document.body.classList.contains('privacy-open'))frame=requestAnimationFrame(render);
   }
   function update() {
-    const y=window.scrollY, vh=window.innerHeight;
+    const y=window.scrollY, vh=viewportHeight;
     const max=Math.max(1,document.documentElement.scrollHeight-vh);
     if(percent)percent.textContent=String(Math.round(clamp(y/max,0,1)*100)).padStart(2,'0');
     let active=stops[0];
@@ -39,7 +41,7 @@
     planes.forEach(plane=>{
       const top=plane.top-y, bottom=top+plane.height;
       const distance=top>vh*.6 ? clamp((top-vh*.6)/(vh*.9),0,1) : bottom<vh*.4 ? clamp((bottom-vh*.4)/(vh*.9),-1,0) : 0;
-      const light=mobile.matches ? .32 : 1;
+      const light=touch.matches ? .32 : 1;
       plane.tx=distance*(plane.index%2 ? -26 : 26)*light;
       plane.tz=(distance>0 ? -distance*300 : -distance*100)*light;
       plane.trx=distance*3*light;
@@ -49,7 +51,7 @@
   }
   function render(time) {
     frame=0;
-    if(document.hidden)return;
+    if(document.hidden || document.body.classList.contains('privacy-open'))return;
     if(measureDirty)measure();
     if(dirty)update();
     if(!enabled)return;
@@ -77,7 +79,12 @@
     dirty=true;requestFrame();
   }
   window.addEventListener('scroll',()=>{dirty=true;requestFrame();},{passive:true});
-  window.addEventListener('resize',()=>{measureDirty=true;dirty=true;requestFrame();},{passive:true});
+  window.addEventListener('resize',()=>{
+    if(document.body.classList.contains('privacy-open'))return;
+    if(touch.matches && window.innerWidth===viewportWidth)return;
+    viewportWidth=window.innerWidth;viewportHeight=window.innerHeight||1;
+    measureDirty=true;dirty=true;requestFrame();
+  },{passive:true});
   document.addEventListener('visibilitychange',()=>{
     if(document.hidden){cancelAnimationFrame(frame);frame=0;lastTime=0;}else{dirty=true;requestFrame();}
   });
@@ -87,5 +94,6 @@
     document.querySelectorAll('main>section,footer').forEach(element=>observer.observe(element));
   }
   if(reduce.addEventListener)reduce.addEventListener('change',preference);else reduce.addListener(preference);
+  if(touch.addEventListener)touch.addEventListener('change',preference);else touch.addListener(preference);
   preference();
 })();

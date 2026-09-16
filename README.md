@@ -6,6 +6,18 @@ Statyczna strona produkcji elementów z karbonu na zamówienie. Zawiera jasną s
 
 Strona działa z serwera plików statycznych. Otwieranie pliku index.html bez serwera może ograniczać JavaScript przez polityki bezpieczeństwa przeglądarki; podstawowa treść i osobna polityka prywatności pozostają zwykłymi dokumentami HTML.
 
+## Telefony, tablety i weryfikacja
+
+Warstwa `mobile.css` dopasowuje typografię, bezpieczne marginesy ekranu i przyciski dotykowe. Menu przechodzi w wersję rozwijaną do 1024 px, a formularz w jedną kolumnę do 600 px. Pola mają 16 px na urządzeniach dotykowych. Odnośnik „Opisz projekt” w zakładkach zastosowań ustawia właściwy obszar formularza. Animacje uwzględniają rodzaj wskaźnika, ograniczenie ruchu i dostępny budżet renderowania; brak WebGL pozostawia treść i grafikę zastępczą.
+
+Testy nie wymagają instalowania pakietów. Z katalogu repozytorium, z Node.js 18 lub nowszym, uruchom:
+
+    node tools/check.cjs
+
+Polecenie sprawdza składnię i uruchamia testy formularza, menu, prywatności, sceny i generatora publikacji. Testy VM oraz emulacja szerokości nie zastępują sprawdzenia na fizycznym iPhonie/iPadzie i telefonie z Androidem. Zakres wykonanej weryfikacji jest w `SPRAWDZENIE-KODU.md`.
+
+## Przygotowanie dla domeny
+
 Domena i hosting nie zostały jeszcze wybrane. Nie wpisano fikcyjnych adresów canonical, sitemap ani firmy. Po wybraniu rzeczywistej domeny HTTPS uruchom z tego folderu:
 
     node tools/prepare-site.cjs --help
@@ -32,6 +44,7 @@ Kod nie korzysta z cookies, analityki, pikseli ani zewnętrznej CAPTCHA. Mapy i 
 - Polityka prywatności: polityka-prywatnosci.html. Panel na stronie głównej otwiera privacy.js, a wygląd określa privacy.css. Narzędzie publikacyjne synchronizuje treść panelu z osobną polityką; lokalny podgląd korzysta z kopii zawartej w index.html.
 - Formularz: app.js i brief-guard.js. Nawigacja i zakładki: app.js.
 - Styl podstawowy: styles.css; efekty i tło: motion.css/js, space.css, space-flow.js i space-scene.js; rozmycie sekcji: mist.css/js; poprawki dostępności: enhancements.css.
+- Układ telefonów i tabletów, cele dotykowe i bezpieczne marginesy: mobile.css. Reguły są ładowane po pozostałych stylach; narzędzie publikacyjne również kopiuje ten plik.
 - Pliki używane w stronie: assets/arb-logo.webp i assets/carbon-hero.webp. Oryginały PNG zachowano jako materiały źródłowe; publikacja kopiuje lżejsze wersje WebP.
 
 Ilustracje kompozytu są koncepcyjne i nie przedstawiają wykonanych produktów ARB. Źródła materiałów i danych firmy zapisano w ZRODLA.md.

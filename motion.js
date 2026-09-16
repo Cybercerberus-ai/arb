@@ -7,6 +7,7 @@
   const $$ = selector => [...document.querySelectorAll(selector)];
   const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   const pointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+  const touchQuery = window.matchMedia('(pointer: coarse)');
   const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
   const hero = $('.hero');
   const heroCopy = $('.hero-content');
@@ -22,6 +23,8 @@
   let frame = 0;
   let previousTime = 0;
   let scrollDirty = true;
+  let viewportWidth = window.innerWidth;
+  let viewportHeight = window.innerHeight || 1;
 
   function write(element, property, value) {
     if (!element) return;
@@ -44,7 +47,7 @@
   }
 
   function schedule() {
-    if (enabled && !document.hidden && !frame) frame = window.requestAnimationFrame(tick);
+    if (enabled && !document.hidden && !body.classList.contains('privacy-open') && !frame) frame = window.requestAnimationFrame(tick);
   }
 
   function target(element, property, destination, unit = '', owner = element, initial = 0) {
@@ -147,7 +150,9 @@
 
   function updateScroll() {
     scrollDirty = false;
-    const height = window.innerHeight || 1;
+    if (body.classList.contains('privacy-open')) return;
+    const height = viewportHeight;
+    const travel = touchQuery.matches ? 0.35 : 1;
     const range = Math.max(0, root.scrollHeight - height);
     write(root, '--reading-progress', String(range ? clamp(window.scrollY / range) : 0));
     controllers.forEach(controller => {
@@ -160,8 +165,8 @@
       visibility.set(hero, visible);
       if (visible) {
         const progress = clamp(-bounds.top / Math.max(bounds.height, 1));
-        target(hero, '--hero-scroll', progress * 65, 'px', hero);
-        target(heroCopy, '--copy-y', progress * 30, 'px', hero);
+        target(hero, '--hero-scroll', progress * 65 * travel, 'px', hero);
+        target(heroCopy, '--copy-y', progress * 30 * travel, 'px', hero);
       }
     }
     if (material && laminate) {
@@ -186,7 +191,7 @@
 
   function tick(time) {
     frame = 0;
-    if (!enabled || document.hidden) return;
+    if (!enabled || document.hidden || body.classList.contains('privacy-open')) return;
     const elapsed = previousTime ? clamp(time - previousTime, 1, 48) : 16;
     previousTime = time;
     if (scrollDirty) updateScroll();
@@ -211,11 +216,19 @@
   }
 
   function queueScroll() {
+    if (body.classList.contains('privacy-open')) return;
     scrollDirty = true;
     schedule();
   }
   window.addEventListener('scroll', queueScroll, { passive: true });
-  window.addEventListener('resize', queueScroll, { passive: true });
+  window.addEventListener('resize', () => {
+    // Browser bars and the onscreen keyboard must not move the page artwork.
+    if (body.classList.contains('privacy-open')) return;
+    if (touchQuery.matches && window.innerWidth === viewportWidth) return;
+    viewportWidth = window.innerWidth;
+    viewportHeight = window.innerHeight || 1;
+    queueScroll();
+  }, { passive: true });
 
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(entries => {
@@ -315,6 +328,7 @@
     controllers.forEach(resetPointer);
     schedule();
   });
+  listenToMedia(touchQuery, queueScroll);
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       window.cancelAnimationFrame(frame);

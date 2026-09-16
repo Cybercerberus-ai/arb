@@ -3,7 +3,7 @@
   if (!('IntersectionObserver' in window) || !Element.prototype.animate) return;
   const body = document.body;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-  const small = matchMedia('(max-width:760px)');
+  const touch = matchMedia('(pointer: coarse)');
   const active = new Map();
   const controls = 'a[href],button,label,input,select,textarea,summary,[tabindex]';
   const selectors = [
@@ -48,7 +48,7 @@
     const volume=element.classList.contains('mist-volume');
     // Keep hit targets still when focus/pointerdown clears a running reveal.
     const control=element.classList.contains('mist-control');
-    const blur=small.matches?8:12;
+    const blur=touch.matches?6:12;
     const keyframes=volume ? [{opacity:0},{opacity:1}] : [
       {opacity:0,filter:`blur(${blur}px) brightness(1.6)`,translate:control?'0 0px':'0 16px',scale:control?'1':'.985',offset:0},
       {opacity:.38,filter:'blur(4px) brightness(1.25)',translate:control?'0 0px':'0 8px',scale:control?'1':'.993',offset:.4},
@@ -56,7 +56,8 @@
     ];
     try {
       element.classList.add('is-mist-moving');
-      const animation=element.animate(keyframes,{duration:volume?1250:1000,delay,easing:'cubic-bezier(.22,.65,.2,1)',fill:'backwards'});
+      const duration=touch.matches?(volume?800:650):(volume?1250:1000);
+      const animation=element.animate(keyframes,{duration,delay:touch.matches?Math.min(delay,90):delay,easing:'cubic-bezier(.22,.65,.2,1)',fill:'backwards'});
       active.set(element,animation);
       const done=()=>{
         if(active.get(element)!==animation)return;
@@ -75,7 +76,7 @@
   function replay(scope) {
     if(!scope || !enabled)return;
     // Replace the earlier FAQ/tab entry effect instead of adding a second one.
-    scope.getAnimations({subtree:true}).forEach(animation=>animation.cancel());
+    if(typeof scope.getAnimations==='function')scope.getAnimations({subtree:true}).forEach(animation=>animation.cancel());
     nodes.filter(element=>scope===element || scope.contains(element)).forEach((element,index)=>{
       if(visible(element))appear(element,Math.min(index*35,175));
     });
