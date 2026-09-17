@@ -1,7 +1,8 @@
 /* Responsive reading and touch controls; desktop composition stays intact. */
 html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 :root { --header-height:96px; }
-.wrap { padding-left:max(var(--gutter),env(safe-area-inset-left,0px)); padding-right:max(var(--gutter),env(safe-area-inset-right,0px)); }
+/* The material section reserves its left column for the carbon illustration. */
+.wrap:where(:not(.material-feature-inner)) { padding-left:max(var(--gutter),env(safe-area-inset-left,0px)); padding-right:max(var(--gutter),env(safe-area-inset-right,0px)); }
 .about-grid>*,.contact-grid>*,.applications>*,.form-row>*,.sector-panel>div { min-width:0; }
 .project-form input,.project-form select,.project-form textarea { min-width:0; max-width:100%; scroll-margin-block:20px; }
 .sector-link-label { display:none; }
@@ -130,6 +131,7 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
   .sector-tabs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:4px 16px; }
   .sector-number { font-size:32px; }
   .material-feature { min-height:0; }
+  .material-feature-inner { padding-left:max(var(--gutter),env(safe-area-inset-left,0px)); padding-right:max(var(--gutter),env(safe-area-inset-right,0px)); }
   .material-feature h2 { font-size:clamp(34px,9vw,48px); }
   .material-feature p:not(.eyebrow) { font-size:15px; }
   .material-feature p br { display:none; }
