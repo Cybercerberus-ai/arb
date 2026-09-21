@@ -30,6 +30,9 @@
     window.scrollTo({left:savedScrollX,top:savedScrollY,behavior:'auto'});
     if(behavior)rootStyle.setProperty('scroll-behavior',behavior,priority);
     else rootStyle.removeProperty('scroll-behavior');
+    // Background effects pause resize handling while the page is locked.
+    // Refresh their viewport before resuming after a rotation or window resize.
+    window.dispatchEvent(new Event('resize'));
     window.dispatchEvent(new Event('scroll'));
   }
   function open(event) {

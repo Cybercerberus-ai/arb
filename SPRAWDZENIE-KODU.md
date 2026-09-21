@@ -1,6 +1,16 @@
-# Sprawdzenie kodu — 16 września 2026
+# Sprawdzenie kodu
 
-## Telefony i tablety
+## Przegląd — 18 września 2026
+
+- Naprawiono odświeżanie animacji po zamknięciu polityki prywatności, jeśli podczas jej wyświetlania obrócono urządzenie lub zmieniono rozmiar okna. Tło pozostaje wstrzymane podczas otwartej polityki, a po zamknięciu otrzymuje aktualne wymiary przed wznowieniem przewijania.
+- Dodano test współpracy polityki ze sceną dla obrotu urządzenia, starszego mechanizmu wysokości ekranu oraz zmiany rozmiaru na komputerze przy ograniczeniu ruchu.
+- Sprawdzono menu mobilne, przejścia z kart, zakładki i klawiaturę, wybór obszaru projektu, walidację i czyszczenie formularza, spis treści polityki oraz zamykanie i przywracanie fokusu. Lokalne pliki, odnośniki, identyfikatory i referencje ARIA są poprawne.
+
+Weryfikacja: składnia 9 skryptów i 34 testy raportowane przez Node — bez błędów. W Chromium sprawdzono zmianę widoku 390 × 844 na 844 × 390 z otwartą polityką: po zamknięciu płótno przyjmuje prawidłowe proporcje, znika blokada przewijania i wraca fokus. Konsola bez błędów i ostrzeżeń. Testy nie obejmują fizycznych urządzeń ani natywnego Safari. Formularz nadal przygotowuje lokalny plik TXT, bez wysyłania wiadomości.
+
+## Przegląd — 16 września 2026
+
+### Telefony i tablety
 
 - Poprawiono wielkość nagłówków, tekstów i pól dotykowych; menu kompaktowe działa do 1024 px, a formularz na telefonie ma jedną kolumnę. Pola na ekranach dotykowych mają 16 px; zachowano możliwość powiększania strony.
 - Menu zamyka się po wybraniu sekcji, kliknięciu poza nim, Escape, wyjściu fokusu i zmianie układu. Fokus trafia do wybranej sekcji.

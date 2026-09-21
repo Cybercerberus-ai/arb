@@ -116,6 +116,56 @@ test('touch movement and locked privacy background schedule no animation', () =>
   assert.ok(app.metrics.draws > draws);
 });
 
+test('closing privacy refreshes artwork after rotation or desktop resizing while the page was locked', () => {
+  for (const options of [{ coarse: true, largeViewport: false }, { coarse: false, reduced: true }]) {
+    const app = harness(options);
+    const style = () => {
+      const properties = new Map();
+      return {
+        getPropertyValue: name => properties.get(name)?.value || '',
+        getPropertyPriority: name => properties.get(name)?.priority || '',
+        setProperty: (name, value, priority = '') => properties.set(name, { value, priority }),
+        removeProperty: name => properties.delete(name)
+      };
+    };
+    const opener = { ...events(), focus() {} };
+    const closeButton = { ...events(), focus() {} };
+    const sheetBody = { scrollTop: 0 };
+    const sheet = {
+      ...events(), open: false,
+      classList: { add() {}, remove() {} },
+      showModal() { this.open = true; },
+      close() { this.open = false; this.fire('close'); },
+      querySelector: selector => selector === '.privacy-sheet__body' ? sheetBody : closeButton,
+      querySelectorAll: selector => selector === '[data-close-privacy]' ? [closeButton] : []
+    };
+    app.body.style = style();
+    app.document.documentElement.style = style();
+    app.document.getElementById = id => id === 'privacy-sheet' ? sheet : app.canvas;
+    app.document.querySelectorAll = selector => selector === '[data-privacy-link]' ? [opener] : [];
+    app.window.scrollX = 0;
+    app.window.scrollTo = options => { app.window.scrollX = options.left; app.window.scrollY = options.top; };
+    app.window.dispatchEvent = event => app.window.fire(event.type);
+    vm.runInNewContext(fs.readFileSync(path.resolve(__dirname, '../privacy.js'), 'utf8'), {
+      window: app.window, document: app.document, Event, matchMedia: query => app.window.matchMedia(query)
+    });
+    opener.fire('click', { button: 0, currentTarget: opener });
+    assert.equal(app.body.classList.contains('privacy-open'), true);
+    const before = { width: app.canvas.width, height: app.canvas.height, draws: app.metrics.draws };
+    app.window.innerWidth = 1200;
+    app.window.innerHeight = 850;
+    app.window.fire('resize'); app.settle();
+    assert.equal(app.canvas.width, before.width);
+    assert.equal(app.canvas.height, before.height);
+    assert.equal(app.metrics.draws, before.draws, 'The locked background must stay paused');
+    closeButton.fire('click'); app.settle();
+    assert.equal(app.body.classList.contains('privacy-open'), false);
+    assert.ok(app.canvas.width > app.canvas.height, 'The artwork must adopt landscape dimensions after closing');
+    assert.ok(Math.abs(app.canvas.width / app.canvas.height - 1200 / 850) < 0.002);
+    if (options.coarse) assert.equal(app.canvas.style.height, '850px', 'Legacy viewport fallback must use the new orientation');
+  }
+});
+
 test('reduced motion and background tabs stop the render loop', () => {
   const reduced = harness({ reduced: true });
   const draws = reduced.metrics.draws;

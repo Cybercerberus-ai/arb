@@ -168,7 +168,7 @@ test('repeated Escape and close clicks run one exit and restore original opener,
   assert.equal(h.window.scrollCalls[0].rootBehavior, 'auto');
   assert.equal(h.pageBody.style.getPropertyValue('--privacy-scroll-y'), '');
   assert.equal(h.document.documentElement.style.getPropertyValue('scroll-behavior'), '');
-  assert.deepEqual(h.window.events, ['scroll']);
+  assert.deepEqual(h.window.events, ['resize', 'scroll']);
   assert.ok(h.sheet.animations.every(animation => animation.canceled));
   h.secondOpener.fire('click');
   assert.equal(h.sheet.openCalls, 2, 'Closing must reset state so the sheet can be opened again');
@@ -255,7 +255,7 @@ test('closing without animation APIs still restores focus and resumes the page a
   assert.equal(h.pageBody.classList.contains('privacy-open'), false);
   assert.equal(h.document.activeElement, h.opener);
   assert.equal(h.window.scrollY, 0);
-  assert.deepEqual(h.window.events, ['scroll']);
+  assert.deepEqual(h.window.events, ['resize', 'scroll']);
 });
 
 test('an animated close cleans up its fill even when getAnimations is unavailable', async () => {
