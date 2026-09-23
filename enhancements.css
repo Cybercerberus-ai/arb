@@ -35,6 +35,7 @@
 }
 @media(prefers-reduced-motion:reduce) { .process-connector__flow { stroke-dashoffset:0; } }
 .clear-brief { margin-top:18px; padding:8px 0; text-decoration:underline; text-underline-offset:4px; }
+.brief-privacy [data-privacy-link] { display:inline-block; }
 .project-form [aria-disabled="true"] { opacity:.65; cursor:wait; }
 .project-form [aria-invalid="true"] { border-color:#b91429; }
 /* The first heading is painted immediately; following sections retain the blur. */

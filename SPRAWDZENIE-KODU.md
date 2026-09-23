@@ -1,5 +1,13 @@
 # Sprawdzenie kodu
 
+## Przegląd — 23 września 2026
+
+- Poprawiono reguły wydruku przy otwartej polityce prywatności: blokada przewijania strony nie pozostawia na wydruku stałego pozycjonowania ani przesunięcia treści. Zmiana dotyczy wyłącznie stylów wydruku.
+- Odnośnik „Polityka prywatności” pod formularzem pozostaje jednym obszarem klikania na wąskim ekranie. Wcześniej łamał się pomiędzy dwoma wierszami, przez co środek jego obwiedni mógł wypadać poza tekstem.
+- Ponownie sprawdzono obsługę animacji, ograniczenie ruchu, ukrywanie karty i okna modalne; nie stwierdzono nowych błędów w tych mechanizmach.
+
+Weryfikacja: składnia 9 skryptów i 34 testy raportowane przez Node — bez błędów. Kontrola HTML, identyfikatorów, odnośników, lokalnych zasobów i nagłówków serwera zakończona poprawnie. W Chromium sprawdzono widok 320 px, otwieranie polityki z formularza, zamykanie panelu, FAQ oraz obsługę klawiaturą okna danych firmy. Poprawkę wydruku zweryfikowano przez przegląd kaskady CSS; nie wykonywano rzeczywistego wydruku. Testy nie obejmują fizycznych urządzeń ani natywnego Safari. Formularz nadal przygotowuje lokalny plik TXT, bez wysyłania wiadomości.
+
 ## Przegląd — 18 września 2026
 
 - Naprawiono odświeżanie animacji po zamknięciu polityki prywatności, jeśli podczas jej wyświetlania obrócono urządzenie lub zmieniono rozmiar okna. Tło pozostaje wstrzymane podczas otwartej polityki, a po zamknięciu otrzymuje aktualne wymiary przed wznowieniem przewijania.

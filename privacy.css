@@ -47,4 +47,8 @@ body.privacy-open { position:fixed; top:var(--privacy-scroll-y,0); left:var(--pr
   .privacy-sheet__footer { padding:6px 20px; }
 }
 @media(prefers-reduced-motion:reduce) { #privacy-sheet::backdrop { animation:none!important; } .privacy-sheet__close { transition:none; } }
-@media print { #privacy-sheet { display:none!important; } }
+@media print {
+  #privacy-sheet { display:none!important; }
+  /* The screen-only scroll lock must not offset or clip the printed page. */
+  body.privacy-open { position:static; top:auto; left:auto; width:auto; overflow:visible; }
+}
