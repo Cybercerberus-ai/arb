@@ -48,4 +48,4 @@ Przed publicznym uruchomieniem trzeba ustalić dostawców i role hostingu/CDN, r
 
 Zasady zapisu i dostępu do informacji na urządzeniu wynikają obecnie z art. 399 Prawa komunikacji elektronicznej, także dla technologii innych niż cookies. Przepis przewiduje wyjątki dla działań koniecznych do transmisji lub realizacji usługi żądanej przez użytkownika. Przy dodaniu opcjonalnej analityki lub marketingu należy ponownie ocenić zgodę i wdrożyć ją przed uruchomieniem takich funkcji. [PKE — aktualny tekst ujednolicony, art. 399](https://isap.sejm.gov.pl/isap.nsf/download.xsp/WDU20240001221/U/D20241221Lj.pdf).
 
-Polityka podaje pocztowy kontakt do firmy i informuje o prawach, których zakres zależy od faktycznego przetwarzania. [UODO — prawa osób i skarga](https://uodo.gov.pl/pl/493/155).
+Polityka podaje pocztowy i e-mailowy kontakt do firmy i informuje o prawach, których zakres zależy od faktycznego przetwarzania. [UODO — prawa osób i skarga](https://uodo.gov.pl/pl/493/155).

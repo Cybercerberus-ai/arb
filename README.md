@@ -1,6 +1,6 @@
 # ARB Carbon Technologies — strona informacyjna
 
-Statyczna strona produkcji elementów z karbonu na zamówienie. Zawiera jasną scenę WebGL, płynne wyłanianie sekcji z rozmycia, całe klikalne karty, zakładki zastosowań, FAQ, kontakt pocztowy i lokalne przygotowanie opisu projektu. Nie wymaga zewnętrznych bibliotek ani bazy danych.
+Statyczna strona produkcji elementów z karbonu na zamówienie. Zawiera jasną scenę WebGL, płynne wyłanianie sekcji z rozmycia, całe klikalne karty, zakładki zastosowań, FAQ, kontakt pocztowy i e-mailowy oraz lokalne przygotowanie opisu projektu. Nie wymaga zewnętrznych bibliotek ani bazy danych.
 
 ## Podgląd i publikacja
 
@@ -33,14 +33,14 @@ Pełny zakres zmian, aktualne oficjalne źródła i kolejne czynności opisuje [
 
 Generator przygotowuje wyłącznie plik TXT. Nie wysyła wiadomości, nie składa zamówienia i nie zapisuje projektu na serwerze. Wymaga JavaScript; przy braku walidatora pola pozostają wyłączone. Kontroluje długość danych, dozwolone sektory i liczbę sztuk. Po pobraniu obowiązuje 3-sekundowa przerwa. „Wyczyść opis” usuwa pola, nie usuwa pobranego pliku.
 
-Nie istnieje endpoint do wysyłki, więc zabezpieczenia przeglądarkowe nie są przedstawiane jako ochrona przyszłego backendu przed spamem. Dodanie prawdziwego kontaktu wymaga odbiorcy, serwera, walidacji i limitów żądań po jego stronie oraz uaktualnienia CSP i informacji o danych. Klucze tajne nie mogą trafić do publicznego JavaScript.
+Nie istnieje endpoint do wysyłki, więc zabezpieczenia przeglądarkowe nie są przedstawiane jako ochrona przyszłego backendu przed spamem. Dodanie wysyłania formularza wymaga odbiorcy, serwera, walidacji i limitów żądań po jego stronie oraz uaktualnienia CSP i informacji o danych. Klucze tajne nie mogą trafić do publicznego JavaScript.
 
 Kod nie korzysta z cookies, analityki, pikseli ani zewnętrznej CAPTCHA. Mapy i rejestry są zwykłymi linkami. Systemowe ograniczenie ruchu jest respektowane, animacje zatrzymują się po zakończeniu ruchu, a treść sekcji i zakładek jest dostępna w HTML.
 
 ## Edycja
 
 - Treści, cztery panele zastosowań, dane rejestrowe, FAQ i metadane: index.html.
-- Dane firmy do pobieranej wizytówki: atrybuty data-company-* w HTML. Przy zmianie adresu zaktualizuj także JSON-LD i link mapy. Nie ma telefonu ani e-maila.
+- Dane firmy do pobieranej wizytówki: atrybuty data-company-* w HTML. Przy zmianie adresu zaktualizuj także JSON-LD i link mapy. Adres e-mail: kontakt@arbcarbon.pl (data-company-email); przy jego zmianie zaktualizuj też odnośniki kontaktowe, JSON-LD i politykę prywatności. Nie ma telefonu.
 - Polityka prywatności: polityka-prywatnosci.html. Panel na stronie głównej otwiera privacy.js, a wygląd określa privacy.css. Narzędzie publikacyjne synchronizuje treść panelu z osobną polityką; lokalny podgląd korzysta z kopii zawartej w index.html.
 - Formularz: app.js i brief-guard.js. Nawigacja i zakładki: app.js.
 - Styl podstawowy: styles.css; efekty i tło: motion.css/js, space.css, space-flow.js i space-scene.js; rozmycie sekcji: mist.css/js; poprawki dostępności: enhancements.css.

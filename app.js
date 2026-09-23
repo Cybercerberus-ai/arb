@@ -319,6 +319,7 @@
     const country = metadata.companyCountry || '';
     const lines = ['BEGIN:VCARD', 'VERSION:3.0', `FN:${vcardEscape(fullName)}`, `N:${vcardEscape(fullName)};;;;`, `ORG:${vcardEscape(fullName)}`];
     if (street || city || postcode || country) lines.push(`ADR;TYPE=WORK:;;${vcardEscape(street)};${vcardEscape(city)};;${vcardEscape(postcode)};${vcardEscape(country)}`);
+    if (metadata.companyEmail) lines.push(`EMAIL;TYPE=INTERNET,WORK:${vcardEscape(metadata.companyEmail)}`);
     if (metadata.companyKrs) lines.push(`NOTE:${vcardEscape(`KRS: ${metadata.companyKrs}`)}`);
     lines.push('END:VCARD');
     const blob = new Blob([lines.join('\r\n') + '\r\n'], { type: 'text/vcard;charset=utf-8' });
