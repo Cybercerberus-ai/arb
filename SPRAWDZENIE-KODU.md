@@ -1,5 +1,12 @@
 # Sprawdzenie kodu
 
+## Kontakt i przegląd — 30 września 2026
+
+- Dodano numer +48 664 039 201 do sekcji kontaktowej, okna danych firmy, wizytówki vCard i danych strukturalnych. Odnośniki używają międzynarodowego formatu `tel:+48664039201`.
+- Zaktualizowano hashe CSP odpowiadające danym strukturalnym oraz dokumentację danych kontaktowych.
+- Składnia 9 skryptów i 34 testy zakończone bez błędów. Dodatkowa kontrola pełnego handlera vCard potwierdziła poprawny telefon, e-mail, adres, format pliku i zwalnianie tymczasowego URL. Kontrola HTML, odnośników, zasobów i lokalnych nagłówków HTTP zakończona poprawnie.
+- W Chromium sprawdzono kontakt na komputerze i ekranie 320 px, menu, kartę prowadzącą do formularza, walidację, przygotowanie i czyszczenie opisu oraz zamknięcie polityki po obrocie do 844 × 390. Nie znaleziono nowych błędów w sprawdzonym zakresie. Testy nie obejmują fizycznych telefonów, połączenia telefonicznego ani natywnego Safari.
+
 ## Przegląd — 23 września 2026
 
 - Poprawiono reguły wydruku przy otwartej polityce prywatności: blokada przewijania strony nie pozostawia na wydruku stałego pozycjonowania ani przesunięcia treści. Zmiana dotyczy wyłącznie stylów wydruku.

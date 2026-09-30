@@ -25,12 +25,12 @@ Oficjalnym punktem odniesienia dla późniejszej aktualizacji jest [API Krajoweg
 ## Ustalenia przekazane przez użytkownika
 
 - Główny profil strony: **produkcja elementów z karbonu na zamówienie**.
-- Publiczny kontakt obejmuje adres pocztowy firmy oraz e-mail **kontakt@arbcarbon.pl**, przekazany przez użytkownika 23 września 2026 r. Nie publikujemy numeru telefonu.
+- Publiczny kontakt obejmuje adres pocztowy firmy oraz e-mail **kontakt@arbcarbon.pl**, przekazany przez użytkownika 23 września 2026 r. Numer telefonu **+48 664 039 201** użytkownik przekazał 30 września 2026 r.
 - Logo marki pochodzi z dostarczonego przez użytkownika pliku `ARB.png`; kopia użyta w stronie to `assets/arb-logo.png`.
 
 Teksty o przygotowaniu projektu i rozmowie o wymaganiach opracowano do tego profilu działalności. Przemysł, motoryzacja, lotnictwo i projekty indywidualne przedstawiono jako przykładowe kierunki zastosowania materiału, z indywidualnym ustalaniem możliwości realizacji. Nie dodawano niezweryfikowanych parametrów technicznych, certyfikatów, nazw klientów, zrealizowanych projektów ani deklaracji wieloletniego doświadczenia ARB.
 
-Narzędzie opisu projektu zapisuje lokalny plik TXT. Nie jest kanałem wysyłki do firmy. Wizytówka vCard zawiera dane adresowe, KRS i e-mail, bez telefonu.
+Narzędzie opisu projektu zapisuje lokalny plik TXT. Nie jest kanałem wysyłki do firmy. Wizytówka vCard zawiera dane adresowe, KRS, e-mail i telefon.
 
 ## Rozróżnienie od Gyro-Tech
 

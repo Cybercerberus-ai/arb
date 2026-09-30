@@ -40,7 +40,7 @@ Kod nie korzysta z cookies, analityki, pikseli ani zewnętrznej CAPTCHA. Mapy i 
 ## Edycja
 
 - Treści, cztery panele zastosowań, dane rejestrowe, FAQ i metadane: index.html.
-- Dane firmy do pobieranej wizytówki: atrybuty data-company-* w HTML. Przy zmianie adresu zaktualizuj także JSON-LD i link mapy. Adres e-mail: kontakt@arbcarbon.pl (data-company-email); przy jego zmianie zaktualizuj też odnośniki kontaktowe, JSON-LD i politykę prywatności. Nie ma telefonu.
+- Dane firmy do pobieranej wizytówki: atrybuty data-company-* w HTML. Przy zmianie adresu zaktualizuj także JSON-LD i link mapy. Adres e-mail: kontakt@arbcarbon.pl (data-company-email); przy jego zmianie zaktualizuj też odnośniki kontaktowe, JSON-LD i politykę prywatności. Telefon: +48 664 039 201 (data-company-phone); jego aktualizacja obejmuje odnośniki tel: i JSON-LD.
 - Polityka prywatności: polityka-prywatnosci.html. Panel na stronie głównej otwiera privacy.js, a wygląd określa privacy.css. Narzędzie publikacyjne synchronizuje treść panelu z osobną polityką; lokalny podgląd korzysta z kopii zawartej w index.html.
 - Formularz: app.js i brief-guard.js. Nawigacja i zakładki: app.js.
 - Styl podstawowy: styles.css; efekty i tło: motion.css/js, space.css, space-flow.js i space-scene.js; rozmycie sekcji: mist.css/js; poprawki dostępności: enhancements.css.
