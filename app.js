@@ -1,5 +1,6 @@
 (() => {
   'use strict';
+  const pageLocked = () => document.body.classList.contains('privacy-open') || document.body.classList.contains('company-open');
 
   const $ = (selector, scope = document) => scope.querySelector(selector);
   const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
@@ -17,7 +18,7 @@
 
   const header = $('#site-header');
   const updateHeader = () => {
-    if (document.body.classList.contains('privacy-open')) return;
+    if (pageLocked()) return;
     header?.classList.toggle('is-scrolled', window.scrollY > 20);
   };
   window.addEventListener('scroll', updateHeader, { passive: true });
@@ -270,33 +271,72 @@
   function setupDialog(id, triggerSelector) {
     const dialog = document.getElementById(id);
     if (!dialog) return;
-    let opener = null;
-    const restoreFocus = () => {
+    let opener = null, savedPosition = null, outsideDown = false;
+    const offsetNames = ['--company-scroll-x', '--company-scroll-y'];
+    const lockPage = () => {
+      savedPosition = {
+        x: window.scrollX, y: window.scrollY,
+        offsets: offsetNames.map(name => ({ value: document.body.style.getPropertyValue(name), priority: document.body.style.getPropertyPriority(name) }))
+      };
+      document.body.style.setProperty(offsetNames[0], `${-savedPosition.x}px`);
+      document.body.style.setProperty(offsetNames[1], `${-savedPosition.y}px`);
+      document.body.classList.add('company-open');
+    };
+    const restorePage = () => {
+      if (!savedPosition) return;
+      const rootStyle = document.documentElement.style;
+      const behavior = rootStyle.getPropertyValue('scroll-behavior');
+      const priority = rootStyle.getPropertyPriority('scroll-behavior');
+      rootStyle.setProperty('scroll-behavior', 'auto', 'important');
+      document.body.classList.remove('company-open');
+      offsetNames.forEach((name, index) => {
+        const saved = savedPosition.offsets[index];
+        if (saved.value) document.body.style.setProperty(name, saved.value, saved.priority);
+        else document.body.style.removeProperty(name);
+      });
+      window.scrollTo({ left: savedPosition.x, top: savedPosition.y, behavior: 'auto' });
+      if (behavior) rootStyle.setProperty('scroll-behavior', behavior, priority);
+      else rootStyle.removeProperty('scroll-behavior');
+      savedPosition = null;
+      // The viewport can change while the background effects are paused.
+      window.dispatchEvent(new Event('resize'));
+      window.dispatchEvent(new Event('scroll'));
+    };
+    const finishClose = () => {
+      restorePage();
+      outsideDown = false;
       opener?.focus?.({ preventScroll: true });
       opener = null;
     };
     const close = () => {
       if (typeof dialog.close === 'function') dialog.close();
-      else { dialog.removeAttribute('open'); restoreFocus(); }
+      else { dialog.removeAttribute('open'); finishClose(); }
     };
     $$(triggerSelector).forEach(trigger => trigger.addEventListener('click', event => {
       event.preventDefault();
+      if (dialog.open || dialog.hasAttribute('open')) return;
       opener = trigger;
-      if (dialog.open) return;
+      lockPage();
       if (typeof dialog.showModal === 'function') dialog.showModal();
       else {
         dialog.setAttribute('open', '');
         dialog.setAttribute('role', 'dialog');
         dialog.setAttribute('aria-modal', 'true');
       }
-      $('[data-close-dialog]', dialog)?.focus();
+      dialog.scrollTop = 0;
+      $('[data-close-dialog]', dialog)?.focus({ preventScroll: true });
     }));
     $$('[data-close-dialog]', dialog).forEach(button => button.addEventListener('click', close));
-    dialog.addEventListener('close', restoreFocus);
-    dialog.addEventListener('click', event => {
-      if (event.target !== dialog) return;
+    dialog.addEventListener('close', finishClose);
+    const outside = event => {
       const bounds = dialog.getBoundingClientRect();
-      if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) close();
+      return event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+    };
+    dialog.addEventListener('pointerdown', event => { outsideDown = event.target === dialog && outside(event); });
+    dialog.addEventListener('pointercancel', () => { outsideDown = false; });
+    dialog.addEventListener('click', event => {
+      if (outsideDown && event.target === dialog && outside(event)) close();
+      outsideDown = false;
     });
     dialog.addEventListener('keydown', event => {
       if (event.key === 'Escape' && typeof dialog.close !== 'function') {

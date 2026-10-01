@@ -1,5 +1,14 @@
 # Sprawdzenie kodu
 
+## Okno danych firmy — 1 października 2026
+
+- Naprawiono przewijanie strony za otwartym oknem danych firmy. Tło zachowuje pozycję, zawartość okna można przewijać, a zamknięcie przywraca obie osie przewijania i fokus na przycisku otwierającym.
+- Naprawiono przypadkowe zamykanie okna podczas zaznaczania tekstu i przeciągania poza jego krawędź. Zamknięcie przez tło wymaga rozpoczęcia i zakończenia kliknięcia poza oknem; anulowany gest dotykowy nie zamyka okna.
+- Animacje tła pozostają wstrzymane przy otwartych danych firmy. Po zamknięciu odświeżają wymiary także po obrocie urządzenia. Uwzględniono wydruk i fallback bez natywnego API dialogu.
+- Oba błędy odtworzono w Chromium przed zmianą i potwierdzono ich naprawę. Sprawdzono komputer, ekran 390 × 844, obrót do 844 × 390, przewijanie wnętrza okna, zamknięcie kliknięciem w tło i powrót do polityki prywatności. Dodatkowe testy wykonują rzeczywisty kod dialogu; na wersji sprzed naprawy wykrywają błędy. Kontrola nie obejmuje fizycznych telefonów ani natywnego Safari.
+
+Weryfikacja końcowa: 41 testów zaliczonych, składnia 9 skryptów poprawna, kontrola HTML i nagłówków HTTP bez błędów. Konsola sprawdzonej strony bez błędów i ostrzeżeń.
+
 ## Kontakt i przegląd — 30 września 2026
 
 - Dodano numer +48 664 039 201 do sekcji kontaktowej, okna danych firmy, wizytówki vCard i danych strukturalnych. Odnośniki używają międzynarodowego formatu `tel:+48664039201`.

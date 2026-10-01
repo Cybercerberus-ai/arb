@@ -1,5 +1,6 @@
 (() => {
   'use strict';
+  const pageLocked = () => document.body.classList.contains('privacy-open') || document.body.classList.contains('company-open');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   const touch = window.matchMedia('(pointer: coarse)');
   const clamp = (n,min,max) => Math.max(min,Math.min(max,n));
@@ -24,7 +25,7 @@
     measureDirty=false;
   }
   function requestFrame() {
-    if(!frame && !document.hidden && !document.body.classList.contains('privacy-open'))frame=requestAnimationFrame(render);
+    if(!frame && !document.hidden && !pageLocked())frame=requestAnimationFrame(render);
   }
   function update() {
     const y=window.scrollY, vh=viewportHeight;
@@ -51,7 +52,7 @@
   }
   function render(time) {
     frame=0;
-    if(document.hidden || document.body.classList.contains('privacy-open'))return;
+    if(document.hidden || pageLocked())return;
     if(measureDirty)measure();
     if(dirty)update();
     if(!enabled)return;
@@ -80,7 +81,7 @@
   }
   window.addEventListener('scroll',()=>{dirty=true;requestFrame();},{passive:true});
   window.addEventListener('resize',()=>{
-    if(document.body.classList.contains('privacy-open'))return;
+    if(pageLocked())return;
     if(touch.matches && window.innerWidth===viewportWidth)return;
     viewportWidth=window.innerWidth;viewportHeight=window.innerHeight||1;
     measureDirty=true;dirty=true;requestFrame();

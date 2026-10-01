@@ -166,6 +166,37 @@ test('closing privacy refreshes artwork after rotation or desktop resizing while
   }
 });
 
+test('company dialog pauses the artwork and closing refreshes its viewport after rotation or resizing', () => {
+  for (const options of [{ coarse: true, largeViewport: false }, { coarse: false }]) {
+    const app = harness(options);
+    const before = {
+      width: app.canvas.width, height: app.canvas.height,
+      draws: app.metrics.draws, viewports: app.metrics.viewports.length
+    };
+    app.body.classList.add('company-open');
+    app.window.innerWidth = 1200;
+    app.window.innerHeight = 850;
+    app.window.scrollY = 500;
+    app.window.fire('resize');
+    app.window.fire('scroll');
+    assert.equal(app.frames.size, 0, 'Events behind the company dialog must not schedule rendering');
+    app.settle();
+    assert.equal(app.canvas.width, before.width);
+    assert.equal(app.canvas.height, before.height);
+    assert.equal(app.metrics.viewports.length, before.viewports);
+    assert.equal(app.metrics.draws, before.draws);
+
+    app.body.classList.remove('company-open');
+    app.window.fire('resize');
+    app.window.fire('scroll');
+    app.settle();
+    assert.ok(app.metrics.draws > before.draws, 'Closing must resume drawing');
+    assert.ok(app.metrics.viewports.length > before.viewports);
+    assert.ok(Math.abs(app.canvas.width / app.canvas.height - 1200 / 850) < 0.002);
+    if (options.coarse) assert.equal(app.canvas.style.height, '850px');
+  }
+});
+
 test('reduced motion and background tabs stop the render loop', () => {
   const reduced = harness({ reduced: true });
   const draws = reduced.metrics.draws;

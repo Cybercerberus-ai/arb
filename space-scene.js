@@ -1,5 +1,6 @@
 (() => {
   'use strict';
+  const pageLocked = () => document.body.classList.contains('privacy-open') || document.body.classList.contains('company-open');
   const canvas = document.getElementById('space-canvas');
   if (!canvas) return;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -433,12 +434,12 @@
   }
 
   function schedule() {
-    if (!failed && !document.hidden && !document.body.classList.contains('privacy-open') && !frame) frame = window.requestAnimationFrame(tick);
+    if (!failed && !document.hidden && !pageLocked() && !frame) frame = window.requestAnimationFrame(tick);
   }
 
   function tick(time) {
     frame = 0;
-    if (failed || document.hidden || document.body.classList.contains('privacy-open')) return;
+    if (failed || document.hidden || pageLocked()) return;
     try {
       if (layoutDirty) measure();
       const elapsed = previousTime ? clamp(time-previousTime,1,48) : 16;
@@ -491,12 +492,12 @@
   if (failed) return;
 
   window.addEventListener('scroll',() => {
-    if (document.body.classList.contains('privacy-open')) return;
+    if (pageLocked()) return;
     scrollTarget = window.scrollY;
     if (!reduced.matches) schedule();
   },{passive:true});
   window.addEventListener('resize',() => {
-    if (document.body.classList.contains('privacy-open')) return;
+    if (pageLocked()) return;
     if (touch.matches && window.innerWidth===viewportWidth) return;
     viewportWidth=window.innerWidth;
     viewportHeight=Math.max(1,window.innerHeight);
@@ -537,7 +538,7 @@
   // Mobile browsers may reclaim the GPU when another tab/app is foregrounded.
   canvas.addEventListener('webglcontextlost',event => { event.preventDefault(); fail(); });
   canvas.addEventListener('webglcontextrestored',() => {
-    if (!document.body.classList.contains('privacy-open')) scrollTarget=window.scrollY;
+    if (!pageLocked()) scrollTarget=window.scrollY;
     scrollCurrent=reduced.matches?0:scrollTarget;
     initialize();
   });

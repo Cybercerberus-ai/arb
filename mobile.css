@@ -9,6 +9,9 @@ html { -webkit-text-size-adjust:100%; text-size-adjust:100%; }
 .dialog-close { min-width:44px; min-height:44px; }
 .dialog { max-height:85vh; max-height:85dvh; overscroll-behavior:contain; }
 .company-details dd { overflow-wrap:anywhere; }
+body.company-open { position:fixed; top:var(--company-scroll-y,0); left:var(--company-scroll-x,0); width:100%; overflow:hidden; }
+#company-dialog[open][aria-modal="true"] { position:fixed; inset:0; margin:auto; height:fit-content; }
+@media print { body.company-open { position:static; top:auto; left:auto; width:auto; overflow:visible; } }
 .footer-bottom { padding-bottom:max(24px,env(safe-area-inset-bottom,0px)); }
 @supports not (overflow:clip) { html { overflow-x:hidden; } body { overflow-x:visible; } }
 

@@ -1,5 +1,6 @@
 (() => {
   'use strict';
+  const pageLocked = () => document.body.classList.contains('privacy-open') || document.body.classList.contains('company-open');
 
   const root = document.documentElement;
   const body = document.body;
@@ -47,7 +48,7 @@
   }
 
   function schedule() {
-    if (enabled && !document.hidden && !body.classList.contains('privacy-open') && !frame) frame = window.requestAnimationFrame(tick);
+    if (enabled && !document.hidden && !pageLocked() && !frame) frame = window.requestAnimationFrame(tick);
   }
 
   function target(element, property, destination, unit = '', owner = element, initial = 0) {
@@ -150,7 +151,7 @@
 
   function updateScroll() {
     scrollDirty = false;
-    if (body.classList.contains('privacy-open')) return;
+    if (pageLocked()) return;
     const height = viewportHeight;
     const travel = touchQuery.matches ? 0.35 : 1;
     const range = Math.max(0, root.scrollHeight - height);
@@ -191,7 +192,7 @@
 
   function tick(time) {
     frame = 0;
-    if (!enabled || document.hidden || body.classList.contains('privacy-open')) return;
+    if (!enabled || document.hidden || pageLocked()) return;
     const elapsed = previousTime ? clamp(time - previousTime, 1, 48) : 16;
     previousTime = time;
     if (scrollDirty) updateScroll();
@@ -216,14 +217,14 @@
   }
 
   function queueScroll() {
-    if (body.classList.contains('privacy-open')) return;
+    if (pageLocked()) return;
     scrollDirty = true;
     schedule();
   }
   window.addEventListener('scroll', queueScroll, { passive: true });
   window.addEventListener('resize', () => {
     // Browser bars and the onscreen keyboard must not move the page artwork.
-    if (body.classList.contains('privacy-open')) return;
+    if (pageLocked()) return;
     if (touchQuery.matches && window.innerWidth === viewportWidth) return;
     viewportWidth = window.innerWidth;
     viewportHeight = window.innerHeight || 1;
