@@ -1,6 +1,6 @@
 # Static hosts supporting the _headers format (e.g. Cloudflare Pages / Netlify).
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-uXaGBjblkV0KZSP3BoPcXy7J4f2AG5iOwcG7FJ2Ofck='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'none'; form-action 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; worker-src 'none'; media-src 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-JtlAI6jmL5VWq82xPhxSK8U9tT5JWuxcZ3Ovqx1WnuI='; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'none'; form-action 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; worker-src 'none'; media-src 'none'; frame-ancestors 'none'
   X-Content-Type-Options: nosniff
   Referrer-Policy: no-referrer
   X-Frame-Options: DENY
@@ -9,3 +9,4 @@
   Cache-Control: public, max-age=0, must-revalidate
 /assets/*
   Cache-Control: public, max-age=3600, must-revalidate
+

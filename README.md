@@ -18,7 +18,7 @@ Polecenie sprawdza składnię i uruchamia testy formularza, menu, prywatności, 
 
 ## Przygotowanie dla domeny
 
-Domena i hosting nie zostały jeszcze wybrane. Nie wpisano fikcyjnych adresów canonical, sitemap ani firmy. Po wybraniu rzeczywistej domeny HTTPS uruchom z tego folderu:
+Docelowa domena to https://arbcarbon.pl, hosting wskazany przez właściciela: dPanel. Pliki źródłowe mają już adresy canonical i sitemap dla tej domeny. Aktualna instrukcja: [SEO-ARBCARBON.md](SEO-ARBCARBON.md). Aby przygotować folder publiczny, uruchom z tego folderu:
 
     node tools/prepare-site.cjs --help
     node tools/prepare-site.cjs ADRES_HTTPS_WŁASNEJ_DOMENY
@@ -48,3 +48,4 @@ Kod nie korzysta z cookies, analityki, pikseli ani zewnętrznej CAPTCHA. Mapy i 
 - Pliki używane w stronie: assets/arb-logo.webp i assets/carbon-hero.webp. Oryginały PNG zachowano jako materiały źródłowe; publikacja kopiuje lżejsze wersje WebP.
 
 Ilustracje kompozytu są koncepcyjne i nie przedstawiają wykonanych produktów ARB. Źródła materiałów i danych firmy zapisano w ZRODLA.md.
+
