@@ -1,4 +1,12 @@
 # Apache: headers require mod_headers; compression requires mod_deflate.
+# Production domain; keep ACME validation reachable for certificate renewal.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/ [NC]
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP_HOST} !^arbcarbon\.pl$ [NC]
+  RewriteRule ^ https://arbcarbon.pl%{REQUEST_URI} [R=301,L,NE]
+</IfModule>
 Options -Indexes
 DirectoryIndex index.html
 <IfModule mod_headers.c>

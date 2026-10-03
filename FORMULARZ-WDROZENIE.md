@@ -21,6 +21,6 @@ Powtórzenie identycznego zapytania z tym samym identyfikatorem przez 24 godziny
 
 `node tools/check.cjs` sprawdza kod JS, formularz (sukces i awarie), walidację i publikację. `php -l inquiry.php` sprawdza składnię, a `php tests/inquiry.test.php` — walidację serwera i budowę wiadomości. Lokalnie sprawdzono też HTTP z atrapą SMTP bez wysyłania rzeczywistych wiadomości: 405, 403, 415, 422, sukces, powtórzenie, konflikt identyfikatora oraz 429.
 
-Publikacja na rzeczywistym hostingu i odbiór prawdziwej wiadomości wymagają osobnego potwierdzenia po wgraniu plików.
+Wdrożono na arbcarbon.pl 3 października 2026. Osiem zmienionych plików porównano bajt po bajcie przez FTPS. Test z przeglądarki zakończył się przyjęciem wiadomości przez serwer. Odbiór w skrzynce wymaga potwierdzenia właściciela. Zachowano produkcyjne przekierowania HTTPS i informacje o logach hostingu. Kopię poprzedniej wersji wykonano przed publikacją.
 
 Źródła: [PHP mail](https://www.php.net/manual/en/function.mail.php), [dhosting — poczta i mail()](https://dhosting.pl/pomoc/baza-wiedzy/poczta-e-mail/), [logi mail()](https://dhosting.pl/pomoc/baza-wiedzy/gdzie-znajde-logi-z-funkcji-php-mail/).
