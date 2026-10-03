@@ -71,3 +71,6 @@ html:not(.has-js-nav) .menu-toggle { display:none; }
   .sector-panel[hidden] { display:flex!important; }
   .legal-nav,.legal-toc { display:none; }
 }
+
+
+.inquiry-trap { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }

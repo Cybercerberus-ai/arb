@@ -5,7 +5,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const guardPath = path.resolve(__dirname, '../brief-guard.js');
 const guard = require(guardPath);
-const valid = {
+const valid = { contactName: 'Jan Testowy', email: 'test@example.com', phone: '+48 600 000 000',
   name: 'Osłona urządzenia', quantity: '12', company: 'Łódź Technologie',
   sector: 'Przemysł', message: 'Proszę o lekką osłonę. Wymiary: 200 × 350 mm.'
 };
@@ -126,3 +126,4 @@ check('browser global works without DOM, cookies, storage or clocks', () => {
 
 process.stdout.write(`Passed ${assertions - failures}/${assertions} checks.\n`);
 if (failures) process.exitCode = 1;
+
