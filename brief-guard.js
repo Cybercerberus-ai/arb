@@ -1,4 +1,4 @@
-/* Local TXT validation. A future receiving server must validate independently. */
+/* Browser validation; inquiry.php independently validates every submitted field. */
 (function (root, factory) {
   'use strict';
   if (typeof module === 'object' && module.exports) module.exports = factory();
@@ -39,8 +39,15 @@
       : typeof input.quantity === 'number' && Number.isInteger(input.quantity) ? String(input.quantity) : '';
     const parsedQuantity = /^[0-9]+$/.test(rawQuantity) ? Number(rawQuantity) : NaN;
     const validQuantity = Number.isSafeInteger(parsedQuantity) && parsedQuantity >= 1 && parsedQuantity <= limits.quantityMax;
-    const values = { name, quantity: validQuantity ? parsedQuantity : null, company, sector, message };
+    const contactName = normalize(input.contactName, false);
+    const email = typeof input.email === 'string' ? input.email.trim() : '';
+    const phone = typeof input.phone === 'string' ? input.phone.trim() : '';
+    const values = { contactName, email, phone, name, quantity: validQuantity ? parsedQuantity : null, company, sector, message };
     const errors = {};
+    if (!contactName || contactName.length > 120) errors.contactName = 'Podaj imię i nazwisko (do 120 znaków).';
+    if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Podaj poprawny adres e-mail.';
+    const digits = phone.replace(/\D/g, '');
+    if (phone.length > 32 || !/^\+?[0-9 ()-]+$/.test(phone) || digits.length < 7 || digits.length > 15) errors.phone = 'Podaj poprawny numer telefonu.';
 
     if (!name) errors.name = 'Podaj nazwę projektu.';
     else if (name.length > limits.name) errors.name = 'Nazwa projektu może mieć najwyżej 100 znaków.';
@@ -56,3 +63,4 @@
 
   return Object.freeze({ validate, sectors, limits });
 });
+

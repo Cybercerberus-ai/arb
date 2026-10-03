@@ -1,5 +1,7 @@
 # SEO, prywatność i wdrożenie ARB
 
+> Dokument historyczny sprzed wdrożenia formularza e-mail. Aktualne informacje: FORMULARZ-WDROZENIE.md i SEO-ARBCARBON.md. Poniższe opisy generatora TXT i braku endpointu nie dotyczą obecnego kodu.
+
 Stan prac i źródeł: **10 września 2026 r.** Strona jest przygotowana lokalnie. Nie została opublikowana pod domeną firmy.
 
 ## Co poprawiono
@@ -49,3 +51,4 @@ Przed publicznym uruchomieniem trzeba ustalić dostawców i role hostingu/CDN, r
 Zasady zapisu i dostępu do informacji na urządzeniu wynikają obecnie z art. 399 Prawa komunikacji elektronicznej, także dla technologii innych niż cookies. Przepis przewiduje wyjątki dla działań koniecznych do transmisji lub realizacji usługi żądanej przez użytkownika. Przy dodaniu opcjonalnej analityki lub marketingu należy ponownie ocenić zgodę i wdrożyć ją przed uruchomieniem takich funkcji. [PKE — aktualny tekst ujednolicony, art. 399](https://isap.sejm.gov.pl/isap.nsf/download.xsp/WDU20240001221/U/D20241221Lj.pdf).
 
 Polityka podaje pocztowy i e-mailowy kontakt do firmy i informuje o prawach, których zakres zależy od faktycznego przetwarzania. [UODO — prawa osób i skarga](https://uodo.gov.pl/pl/493/155).
+

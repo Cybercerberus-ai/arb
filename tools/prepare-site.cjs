@@ -10,7 +10,7 @@ const crypto = require('node:crypto');
 const net = require('node:net');
 
 const PUBLIC_FILES = Object.freeze([
-  'index.html', 'polityka-prywatnosci.html',
+  'index.html', 'polityka-prywatnosci.html', 'inquiry.php',
   'styles.css', 'motion.css', 'space.css', 'mist.css', 'cards.css', 'enhancements.css', 'privacy.css', 'mobile.css',
   'app.js', 'brief-guard.js', 'motion.js', 'space-flow.js', 'space-scene.js', 'mist.js', 'privacy.js',
   'robots.txt', '_headers', '.htaccess',
@@ -243,3 +243,4 @@ if (require.main === module) {
 }
 
 module.exports = { validateOrigin, prepareSite, PUBLIC_FILES, synchronizePrivacy };
+

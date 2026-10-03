@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-# The publication tool adds the sitemap URL for the chosen HTTPS domain.
+Sitemap: https://arbcarbon.pl/sitemap.xml
