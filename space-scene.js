@@ -294,9 +294,9 @@
     // from the last width/orientation change instead.
     canvas.style.height = touch.matches ? (largeViewport ? '100lvh' : `${viewportHeight}px`) : '100%';
     height = Math.max(1, touch.matches ? (canvas.clientHeight || viewportHeight) : window.innerHeight);
-    const pixelBudget = touch.matches ? 2250000 : 5000000;
+    const pixelBudget = touch.matches ? 1500000 : 2500000;
     const maximumDimension = gl.getParameter(gl.MAX_RENDERBUFFER_SIZE);
-    const density = touch.matches ? (window.devicePixelRatio || 1) : Math.max(window.devicePixelRatio || 1,width<700 ? 1.25 : 1.5);
+    const density = window.devicePixelRatio || 1;
     dpr = Math.min(density,touch.matches ? 1.5 : 2,Math.sqrt(pixelBudget/(width*height)),maximumDimension/width,maximumDimension/height);
     const pixelWidth = Math.round(width*dpr), pixelHeight = Math.round(height*dpr);
     if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
@@ -548,3 +548,4 @@
     document.querySelectorAll('main>section,footer').forEach(section => resizeObserver.observe(section));
   }
 })();
+

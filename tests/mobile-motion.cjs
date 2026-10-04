@@ -76,10 +76,10 @@ function harness({ coarse = true, reduced = false, largeViewport = true, webgl =
 test('touch tablets receive a bounded pixel and geometry budget', () => {
   const touch = harness(), desktop = harness({ coarse: false });
   assert.equal(touch.canvas.dataset.renderer, 'webgl');
-  assert.ok(touch.canvas.width * touch.canvas.height <= 2252000);
+  assert.ok(touch.canvas.width * touch.canvas.height <= 1502000);
   assert.ok(touch.metrics.vertexLengths[0] < desktop.metrics.vertexLengths[0]);
   assert.equal(touch.canvas.style.height, '100lvh');
-  assert.equal(desktop.canvas.width, 1700);
+  assert.ok(desktop.canvas.width * desktop.canvas.height <= 2503000);
 });
 
 test('mobile browser bars and keyboard do not reallocate the canvas', () => {
@@ -231,3 +231,4 @@ test('unavailable WebGL leaves the CSS/image fallback usable', () => {
   assert.equal(app.body.classList.contains('space-rendered'), false);
   assert.equal(app.frames.size, 0);
 });
+
