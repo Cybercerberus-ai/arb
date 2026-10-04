@@ -187,85 +187,57 @@
   messageField?.addEventListener('input', updateMessageCount);
   updateMessageCount();
 
-  function downloadText(content, filename, type = 'text/plain;charset=utf-8') {
-    const blob = new Blob(['\uFEFF', content], { type });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.append(link);
-    link.click();
-    link.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 5000);
-  }
-
-  // No endpoint: validation and the cooldown protect local file preparation only.
-  // A future sending service must perform its own server-side anti-abuse checks.
   const guard = window.ARBBriefGuard;
   const submitButton = $('#prepare-inquiry');
-  let lastPreparedAt = -Infinity;
-  let cooldownTimer = 0;
   const briefFields = $('#brief-fields');
+  let sending = false, lastPayload = '', requestId = '';
   if (form && guard) {
     form.noValidate = true;
     $$('input, textarea, select', form).forEach(input => {
-      const clearError = () => { input.setCustomValidity(''); input.removeAttribute('aria-invalid'); };
-      input.addEventListener('input', clearError);
-      input.addEventListener('change', clearError);
+      const clear = () => { input.setCustomValidity(''); input.removeAttribute('aria-invalid'); };
+      input.addEventListener('input', clear); input.addEventListener('change', clear);
     });
-    form.addEventListener('submit', event => {
+    form.addEventListener('submit', async event => {
       event.preventDefault();
-      if (performance.now() - lastPreparedAt < 3000) {
-        announce(formStatus, 'Plik został już przygotowany. Odczekaj chwilę przed kolejnym pobraniem.');
-        return;
-      }
-      const names = ['name', 'quantity', 'company', 'sector', 'message'];
+      if (sending) return;
+      const names = ['name','quantity','company','sector','message','contactName','email','phone'];
       const result = guard.validate(Object.fromEntries(names.map(name => [name, field(name)?.value || ''])));
       names.forEach(name => {
-        const input = field(name);
-        if (!input) return;
+        const input = field(name); if (!input) return;
         input.setCustomValidity(result.errors[name] || '');
-        if (result.errors[name]) input.setAttribute('aria-invalid', 'true');
-        else input.removeAttribute('aria-invalid');
+        if (result.errors[name]) input.setAttribute('aria-invalid','true'); else input.removeAttribute('aria-invalid');
       });
       if (!result.ok || !form.reportValidity()) {
-        form.reportValidity();
-        announce(formStatus, 'Sprawdź zaznaczone pola. Opis nie został pobrany ani wysłany.');
-        return;
+        form.reportValidity(); announce(formStatus,'Sprawdź zaznaczone pola. Zapytanie nie zostało wysłane.'); return;
       }
-      names.forEach(name => { if (field(name)) field(name).value = String(result.values[name]); });
-      updateMessageCount();
-      const { name, quantity, company, sector, message } = result.values;
-      const body = [
-        'ARB CARBON TECHNOLOGIES', 'OPIS PROJEKTU', '',
-        'Data przygotowania: ' + new Intl.DateTimeFormat('pl-PL', { dateStyle: 'long' }).format(new Date()),
-        'Nazwa projektu: ' + name,
-        'Planowana liczba sztuk: ' + quantity,
-        ...(company ? ['Firma: ' + company] : []),
-        'Obszar projektu: ' + sector,
-        '', 'Opis projektu:', message, '',
-        'Dokument został przygotowany lokalnie w przeglądarce. Dane nie zostały wysłane do firmy ani na serwer.'
-      ].join('\r\n');
+      const payload = {...result.values, website: field('website')?.value || ''};
+      const serialized = JSON.stringify(payload);
+      if (serialized !== lastPayload || !requestId) { requestId = window.crypto.randomUUID(); lastPayload = serialized; }
+      sending = true; briefFields.disabled = true;
+      submitButton?.setAttribute('aria-busy','true');
+      announce(formStatus,'Wysyłanie zapytania…');
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 25000);
       try {
-        downloadText(body, 'ARB-opis-projektu.txt');
-        lastPreparedAt = performance.now();
-        submitButton?.setAttribute('aria-disabled', 'true');
-        clearTimeout(cooldownTimer);
-        cooldownTimer = setTimeout(() => submitButton?.removeAttribute('aria-disabled'), 3000);
-        announce(formStatus, 'Opis projektu jest gotowy do pobrania. Nic nie zostało wysłane. Pola możesz usunąć przyciskiem „Wyczyść opis”.');
-      } catch {
-        announce(formStatus, 'Nie udało się przygotować pobierania. Skopiuj opis z formularza. Nic nie zostało wysłane.');
+        const response = await window.fetch('inquiry.php', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({...payload,requestId}), signal:controller.signal, credentials:'omit'});
+        const data = await response.json();
+        if (!response.ok || data.ok !== true) throw new Error(data.message || 'Serwer nie przyjął zapytania.');
+        announce(formStatus,data.message);
+      } catch (error) {
+        const detail = error.name === 'AbortError' ? 'Przekroczono czas oczekiwania. Nie udało się potwierdzić wysyłki.' : error.message;
+        announce(formStatus, detail + ' Dane pozostają w formularzu. Możesz spróbować ponownie lub napisać na kontakt@arbcarbon.pl.');
+      } finally {
+        clearTimeout(timeout); sending = false; briefFields.disabled = false;
+        submitButton?.removeAttribute('aria-busy');
       }
     });
-    form.addEventListener('reset', () => {
+    form.addEventListener('reset', event => {
+      if (sending) { event.preventDefault(); return; }
       $$('input, textarea, select', form).forEach(input => { input.setCustomValidity(''); input.removeAttribute('aria-invalid'); });
-      setTimeout(() => {
-        updateMessageCount();
-        announce(formStatus, 'Pola formularza zostały wyczyszczone. Pobrany wcześniej plik pozostaje na Twoim urządzeniu.');
-      }, 0);
+      lastPayload = ''; requestId = '';
+      setTimeout(() => { updateMessageCount(); announce(formStatus,'Pola formularza zostały wyczyszczone.'); },0);
     });
-    // A failed/missing guard leaves the fieldset disabled instead of falling back to a network submit.
-    if (briefFields) briefFields.disabled = false;
+    briefFields.disabled = false;
   }
 
   function setupDialog(id, triggerSelector) {
@@ -374,3 +346,4 @@
     window.setTimeout(() => URL.revokeObjectURL(url), 5000);
   }));
 })();
+

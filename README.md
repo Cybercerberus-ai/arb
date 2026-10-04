@@ -1,6 +1,6 @@
 # ARB Carbon Technologies — strona informacyjna
 
-Statyczna strona produkcji elementów z karbonu na zamówienie. Zawiera jasną scenę WebGL, płynne wyłanianie sekcji z rozmycia, całe klikalne karty, zakładki zastosowań, FAQ, kontakt pocztowy i e-mailowy oraz lokalne przygotowanie opisu projektu. Nie wymaga zewnętrznych bibliotek ani bazy danych.
+Statyczna strona produkcji elementów z karbonu na zamówienie. Zawiera jasną scenę WebGL, płynne wyłanianie sekcji z rozmycia, całe klikalne karty, zakładki zastosowań, FAQ, kontakt pocztowy i e-mailowy oraz formularz zapytań wysyłanych e-mailem. Formularz wymaga PHP 8.1+ i funkcji mail() na serwerze; nie wymaga bazy danych.
 
 ## Podgląd i publikacja
 
@@ -18,7 +18,7 @@ Polecenie sprawdza składnię i uruchamia testy formularza, menu, prywatności, 
 
 ## Przygotowanie dla domeny
 
-Domena i hosting nie zostały jeszcze wybrane. Nie wpisano fikcyjnych adresów canonical, sitemap ani firmy. Po wybraniu rzeczywistej domeny HTTPS uruchom z tego folderu:
+Docelowa domena to https://arbcarbon.pl, hosting wskazany przez właściciela: dPanel. Pliki źródłowe mają już adresy canonical i sitemap dla tej domeny. Aktualna instrukcja: [SEO-ARBCARBON.md](SEO-ARBCARBON.md). Aby przygotować folder publiczny, uruchom z tego folderu:
 
     node tools/prepare-site.cjs --help
     node tools/prepare-site.cjs ADRES_HTTPS_WŁASNEJ_DOMENY
@@ -31,20 +31,19 @@ Pełny zakres zmian, aktualne oficjalne źródła i kolejne czynności opisuje [
 
 ## Formularz i prywatność
 
-Generator przygotowuje wyłącznie plik TXT. Nie wysyła wiadomości, nie składa zamówienia i nie zapisuje projektu na serwerze. Wymaga JavaScript; przy braku walidatora pola pozostają wyłączone. Kontroluje długość danych, dozwolone sektory i liczbę sztuk. Po pobraniu obowiązuje 3-sekundowa przerwa. „Wyczyść opis” usuwa pola, nie usuwa pobranego pliku.
+Formularz wysyła zapytanie na kontakt@arbcarbon.pl wraz z imieniem i nazwiskiem, adresem e-mail i numerem telefonu. Endpoint inquiry.php waliduje dane, ogranicza spam i powtórzenia. Przeglądarka zachowuje wpisane dane przy błędzie. Wysłanie formularza nie składa zamówienia.
 
-Nie istnieje endpoint do wysyłki, więc zabezpieczenia przeglądarkowe nie są przedstawiane jako ochrona przyszłego backendu przed spamem. Dodanie wysyłania formularza wymaga odbiorcy, serwera, walidacji i limitów żądań po jego stronie oraz uaktualnienia CSP i informacji o danych. Klucze tajne nie mogą trafić do publicznego JavaScript.
-
-Kod nie korzysta z cookies, analityki, pikseli ani zewnętrznej CAPTCHA. Mapy i rejestry są zwykłymi linkami. Systemowe ograniczenie ruchu jest respektowane, animacje zatrzymują się po zakończeniu ruchu, a treść sekcji i zakładek jest dostępna w HTML.
+Wdrożenie, wymagania PHP i testy opisuje [FORMULARZ-WDROZENIE.md](FORMULARZ-WDROZENIE.md). Sprawdzenie lokalne nie potwierdza dostarczenia wiadomości przez serwer produkcyjny. Po publikacji wymagany jest test odbioru w skrzynce ARB. Polityka prywatności opisuje przekazanie danych do firmy przez hosting i pocztę.
 
 ## Edycja
 
 - Treści, cztery panele zastosowań, dane rejestrowe, FAQ i metadane: index.html.
 - Dane firmy do pobieranej wizytówki: atrybuty data-company-* w HTML. Przy zmianie adresu zaktualizuj także JSON-LD i link mapy. Adres e-mail: kontakt@arbcarbon.pl (data-company-email); przy jego zmianie zaktualizuj też odnośniki kontaktowe, JSON-LD i politykę prywatności. Telefon: +48 664 039 201 (data-company-phone); jego aktualizacja obejmuje odnośniki tel: i JSON-LD.
 - Polityka prywatności: polityka-prywatnosci.html. Panel na stronie głównej otwiera privacy.js, a wygląd określa privacy.css. Narzędzie publikacyjne synchronizuje treść panelu z osobną polityką; lokalny podgląd korzysta z kopii zawartej w index.html.
-- Formularz: app.js i brief-guard.js. Nawigacja i zakładki: app.js.
+- Formularz: app.js, brief-guard.js i inquiry.php. Nawigacja i zakładki: app.js.
 - Styl podstawowy: styles.css; efekty i tło: motion.css/js, space.css, space-flow.js i space-scene.js; rozmycie sekcji: mist.css/js; poprawki dostępności: enhancements.css.
 - Układ telefonów i tabletów, cele dotykowe i bezpieczne marginesy: mobile.css. Reguły są ładowane po pozostałych stylach; narzędzie publikacyjne również kopiuje ten plik.
 - Pliki używane w stronie: assets/arb-logo.webp i assets/carbon-hero.webp. Oryginały PNG zachowano jako materiały źródłowe; publikacja kopiuje lżejsze wersje WebP.
 
 Ilustracje kompozytu są koncepcyjne i nie przedstawiają wykonanych produktów ARB. Źródła materiałów i danych firmy zapisano w ZRODLA.md.
+

@@ -48,11 +48,10 @@
     const volume=element.classList.contains('mist-volume');
     // Keep hit targets still when focus/pointerdown clears a running reveal.
     const control=element.classList.contains('mist-control');
-    const blur=touch.matches?6:12;
     const keyframes=volume ? [{opacity:0},{opacity:1}] : [
-      {opacity:0,filter:`blur(${blur}px) brightness(1.6)`,translate:control?'0 0px':'0 16px',scale:control?'1':'.985',offset:0},
-      {opacity:.38,filter:'blur(4px) brightness(1.25)',translate:control?'0 0px':'0 8px',scale:control?'1':'.993',offset:.4},
-      {opacity:1,filter:'blur(0px) brightness(1)',translate:'0 0px',scale:'1',offset:1}
+      {opacity:0,filter:'none',translate:control?'0 0px':'0 16px',scale:control?'1':'.985',offset:0},
+      {opacity:.38,filter:'none',translate:control?'0 0px':'0 8px',scale:control?'1':'.993',offset:.4},
+      {opacity:1,filter:'none',translate:'0 0px',scale:'1',offset:1}
     ];
     try {
       element.classList.add('is-mist-moving');
@@ -140,3 +139,4 @@
     body.classList.remove('mist-ready');
   }
 })();
+
